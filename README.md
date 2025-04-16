@@ -1,37 +1,35 @@
-# Graph Models in Python
+# Graph Generator Toolkit
 
-This project implements several classical graph models using Python. The `Graph` class supports undirected and directed graphs, and includes methods for generating graphs using the following models:
+**Author:** Alejandro Monroy Azpeitia  
+**Institution:** Centro de Investigación en Computación (CIC), Instituto Politécnico Nacional  
+**Program:** Master's in Computer Science  
+**Course:** Algorithm Design  
 
-- **Mesh (Grid) Graph**
-- **Erdős–Rényi Graph (G(n, m))**
-- **Gilbert Graph (G(n, p))**
-- **Geographic Graph (G(n, r))**
-- **Barabási–Albert Graph (Preferential Attachment)**
-- **Dorogovtsev–Mendes Graph**
+## Overview
 
-Each graph can be exported in DOT format for visualization using tools like Graphviz.
+This project implements a Python-based toolkit for creating and exporting various types of undirected graphs, designed for experimentation and algorithmic analysis in graph theory. The implementation includes custom data structures for `Vertex`, `Edge`, and `Graph`, and supports the generation of several well-known random graph models. The graphs are exported in DOT format for visualization with tools such as Graphviz.
 
----
+## Features
 
-## Requirements
+- **Graph Representation**
+  - Undirected or directed graphs
+  - Vertex and Edge classes with adjacency lists
+- **DOT Export**
+  - Generation of `.dot` files for external visualization
+- **Random Graph Generators**
+  - Mesh grid graphs
+  - Erdős–Rényi \( G(n, m) \)
+  - Gilbert \( G(n, p) \)
+  - Geographic random graphs \( G(n, r) \)
+  - Barabási–Albert preferential attachment model
+  - Dorogovtsev–Mendes growth model
 
-- Python 3.x
-- [Graphviz](https://graphviz.org/) (for rendering `.dot` files)
+## Graph Models Implemented
 
-No external Python libraries are required; the implementation uses only the standard library.
+### 1. Mesh Graphs
+Creates a 2D grid-like structure of nodes where each node is connected to its immediate neighbors.
 
----
-
-## File Structure
-
-- `Vertex`: Class for vertices (nodes) in the graph.
-- `Edge`: Class for edges between vertices.
-- `Graph`: Main class that manages vertices, edges, and graph generation.
-
----
-
-## Usage
-
-You can generate and export different types of graphs by creating instances of the `Graph` class and calling the corresponding methods:
-
-```
+```python
+graphMesh50.meshGraph(5, 10)
+graphMesh200.meshGraph(10, 20)
+graphMesh500.meshGraph(25, 20)
