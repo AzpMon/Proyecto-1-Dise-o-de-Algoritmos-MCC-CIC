@@ -1,9 +1,3 @@
-
-import random
-import itertools
-import Vertex 
-import Edge
-
 class Graph:
     """
     Class representing a graph with vertices and edges.
@@ -17,6 +11,12 @@ class Graph:
         self.vertices = {}  # Dictionary of vertices
         self.edges = {}  # Dictionary of edges
         self.directed = directed
+        
+        self.typesOfGraphs = {'mesh':self.meshGraph, 'ErdosRenyi':self.ErdosRenyiGraph, 
+                              'Gilbert':self.GilbertGraph, 'geographic':self.geographicGraph, 
+                              'BarabasiAlbert':self.BarabasiAlbertGraph, 
+                              'DorogovtsevMendes':self.DorogovtsevMendesGraph
+                              }
 
     def add_vertex(self, id):
         """
@@ -244,3 +244,94 @@ class Graph:
             # Connect it to both endpoints of the chosen edge
             self.add_edge(str(i), randomVertex1.id)
             self.add_edge(str(i), randomVertex2.id)
+            
+            
+ 
+    def BFS(self, initVertex):
+        """Performs a Breadth-First Search (BFS) starting from a given vertex and constructs
+        a BFS tree (i.e., a spanning tree without cycles that connects all reachable vertices).
+        Args:
+            initVertex (Vertex): The initial vertex where the algorithm will begins.
+
+        Returns:
+            Graph: A new Graph object representing the BFS tree rooted at initVertex.
+            If initVertex does not exist in the graph, an empty list is returned
+        """
+        
+        
+        # Se crea el grafo BFS_tree
+        BFS_tree = Graph()
+        
+        
+        # Se verifica si el initVertex existe en los vertices
+        initVertex = self.vertices.get(str(initVertex))   
+        if not initVertex:
+            return []   # Si el initV   ertex no existe
+        
+        
+        # Se inicializa el algoritmo de BFS
+        queueVertex = collections.deque()
+        queueVertex.append(initVertex)
+        
+        visitedVertices = set()
+        visitedVertices.add(initVertex)
+        
+        
+        while queueVertex: # Mientras no sea vacia queueVertex
+            
+            actualVertex = queueVertex.popleft()
+            for neighbor in actualVertex.neighbors:
+                if neighbor not in visitedVertices:
+                    queueVertex.append(neighbor)
+                    visitedVertices.add(neighbor)
+                    BFS_tree.add_edge(actualVertex, neighbor)
+
+        return BFS_tree
+    
+    
+    def dfsRecurisive(self, initVertex):
+        initVertexObj =  self.vertices.get(str(initVertex))   
+        if not initVertexObj:
+            return Graph(directed=self.directed)  # Retorna un grafo vacío si el vértice no existe
+
+        visitedVertices = set()
+        dfsTree = Graph(directed=self.directed)
+        dfsTree.add_vertex(initVertex)
+
+        def dfs(vertex):
+            visitedVertices.add(vertex)
+            for neighbor in vertex.neighbors:
+                if neighbor not in visitedVertices:
+                    dfsTree.add_vertex(neighbor.id)
+                    dfsTree.add_edge(vertex.id, neighbor.id)
+                    dfs(neighbor)
+
+        dfs(initVertexObj)
+        return dfsTree
+        
+    def dfsIterative(self, initVertex):
+        # Obtener el objeto del vértice inicial
+        initVertexObj =  self.vertices.get(str(initVertex))   
+        if not initVertexObj:
+            return []  # Si el vértice inicial no existe, retorna lista vacía
+
+        # Grafo que representará el árbol DFS
+        dfs_tree = Graph()
+        dfs_tree.add_vertex(initVertex)
+
+        visited = set()
+        stack = [initVertexObj]
+        visited.add(initVertexObj)
+
+        while stack:
+            current = stack.pop()
+            for neighbor in current.neighbors:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    stack.append(neighbor)
+
+                    # Añadir vértices y arista al árbol DFS
+                    dfs_tree.add_vertex(neighbor.id)
+                    dfs_tree.add_edge(current.id, neighbor.id)
+
+        return dfs_tree
