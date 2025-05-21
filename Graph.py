@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 import heapq
 
+=======
+
+import random
+import itertools
+import Vertex 
+import Edge
+>>>>>>> 8cf4f69634b38e60e86414b5a59472fbb27cc1c8
 
 class Graph:
     """
@@ -14,12 +22,15 @@ class Graph:
         self.vertices = {}  # Dictionary of vertices
         self.edges = {}  # Dictionary of edges
         self.directed = directed
+<<<<<<< HEAD
         
         self.typesOfGraphs = {'mesh':self.meshGraph, 'ErdosRenyi':self.ErdosRenyiGraph, 
                               'Gilbert':self.GilbertGraph, 'geographic':self.geographicGraph, 
                               'BarabasiAlbert':self.BarabasiAlbertGraph, 
                               'DorogovtsevMendes':self.DorogovtsevMendesGraph
                               }
+=======
+>>>>>>> 8cf4f69634b38e60e86414b5a59472fbb27cc1c8
 
     def add_vertex(self, id):
         """
@@ -246,6 +257,7 @@ class Graph:
             
             # Connect it to both endpoints of the chosen edge
             self.add_edge(str(i), randomVertex1.id)
+<<<<<<< HEAD
             self.add_edge(str(i), randomVertex2.id)
             
             
@@ -392,3 +404,6 @@ class Graph:
                 dijkstra_tree.add_edge(renamed_ids[u], renamed_ids[v])
 
         return dijkstra_tree
+=======
+            self.add_edge(str(i), randomVertex2.id)
+>>>>>>> 8cf4f69634b38e60e86414b5a59472fbb27cc1c8
