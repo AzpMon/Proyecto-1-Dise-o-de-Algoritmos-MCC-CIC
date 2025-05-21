@@ -1,13 +1,8 @@
-<<<<<<< HEAD
 import heapq
-
-=======
-
 import random
 import itertools
 import Vertex 
 import Edge
->>>>>>> 8cf4f69634b38e60e86414b5a59472fbb27cc1c8
 
 class Graph:
     """
@@ -404,6 +399,3 @@ class Graph:
                 dijkstra_tree.add_edge(renamed_ids[u], renamed_ids[v])
 
         return dijkstra_tree
-=======
-            self.add_edge(str(i), randomVertex2.id)
->>>>>>> 8cf4f69634b38e60e86414b5a59472fbb27cc1c8
