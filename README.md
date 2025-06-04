@@ -7,10 +7,14 @@
 
 ## Overview
 
-<<<<<<< HEAD
-This project implements a Python-based toolkit for creating, analyzing, and exporting various types of graphs. It includes custom object-oriented implementations for `Vertex`, `Edge`, and `Graph` classes. The graphs can be generated using classical random models and exported in DOT format for visualization (e.g., using Graphviz or Gephi).
+This project implements a Python-based toolkit for creating, analyzing, and exporting various types of graphs. It includes custom object-oriented implementations for `Vertex`, `Edge`, and `Graph` classes. Graphs can be generated using classical random models and exported in DOT format for visualization (e.g., using Graphviz or Gephi).
 
-The toolkit also includes graph traversal algorithms and a custom implementation of **Dijkstra's algorithm**, which builds a shortest-path tree and annotates each vertex with its distance to the source.
+The toolkit also includes graph traversal algorithms and a custom implementation of **Dijkstra's algorithm**, as well as **Minimum Spanning Tree (MST)** algorithms such as **Kruskal**, **Reverse-Delete (Kruskal Inverse)**, and **Prim**.
+
+A new script has been added to **automatically generate and analyze graphs** of different types and sizes. For each graph:
+- Three MST algorithms are executed: Kruskal, Kruskal Inverse, and Prim.
+- The DOT file of each result is saved.
+- The name of the generator, algorithm used, and total MST weight are printed.
 
 ## Features
 
@@ -18,7 +22,7 @@ The toolkit also includes graph traversal algorithms and a custom implementation
 
 - Supports both **directed** and **undirected** graphs
 - Custom `Vertex` and `Edge` classes using adjacency lists
-- Vertex degrees and neighborhood tracking
+- Vertex degree and neighborhood tracking
 
 ### ✔ Graph Visualization
 
@@ -30,10 +34,14 @@ The toolkit also includes graph traversal algorithms and a custom implementation
 - **Breadth-First Search (BFS)** — returns a spanning tree
 - **Depth-First Search (DFS)** — both recursive and iterative implementations
 - **Dijkstra’s Algorithm**
-  - Computes the shortest path tree from a source vertex
-  - The resulting tree contains renamed vertices:  
-    e.g., `node_2 (3.00)` indicates distance 3.0 from the source
-  - All edge weights are assumed to be `1`
+  - Computes the shortest-path tree from a source vertex
+  - Vertices in the result include their distance: e.g., `node_2 (3.00)` means distance 3.0
+  - Assumes unit weights on edges
+- **Minimum Spanning Tree (MST) Algorithms**
+  - **Kruskal's Algorithm**
+  - **Reverse-Delete Algorithm** (Kruskal Inverse)
+  - **Prim's Algorithm**
+  - Automatically tested across all graph models and saved to DOT format
 
 ### ✔ Random Graph Generators
 
@@ -51,21 +59,3 @@ g = Graph()
 g.meshGraph(3, 3)  # Generates a 3x3 grid
 shortest_path_tree = g.Dijkstra("0_0")
 shortest_path_tree.generate_dot("dijkstra_tree.dot")
-=======
-This project implements a Python-based toolkit for creating and exporting various types of undirected graphs, designed for experimentation and algorithmic analysis in graph theory. The implementation includes custom data structures for `Vertex`, `Edge`, and `Graph`, and supports the generation of several well-known random graph models. The graphs are exported in DOT format for visualization with tools such as Graphviz.
-
-## Features
-
-- **Graph Representation**
-  - Undirected or directed graphs
-  - Vertex and Edge classes with adjacency lists
-- **DOT Export**
-  - Generation of `.dot` files for external visualization
-- **Random Graph Generators**
-  - Mesh grid graphs
-  - Erdős–Rényi \( G(n, m) \)
-  - Gilbert \( G(n, p) \)
-  - Geographic random graphs \( G(n, r) \)
-  - Barabási–Albert preferential attachment model
-  - Dorogovtsev–Mendes growth model
->>>>>>> 8cf4f69634b38e60e86414b5a59472fbb27cc1c8
