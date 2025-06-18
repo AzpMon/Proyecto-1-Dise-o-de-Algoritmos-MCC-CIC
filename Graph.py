@@ -1,13 +1,10 @@
-<<<<<<< HEAD
 import heapq
-
-=======
-
+from Vertex import Vertex
+from Edge import Edge
 import random
+import math
+import collections
 import itertools
-import Vertex 
-import Edge
->>>>>>> 8cf4f69634b38e60e86414b5a59472fbb27cc1c8
 
 class Graph:
     """
@@ -22,15 +19,13 @@ class Graph:
         self.vertices = {}  # Dictionary of vertices
         self.edges = {}  # Dictionary of edges
         self.directed = directed
-<<<<<<< HEAD
+
         
         self.typesOfGraphs = {'mesh':self.meshGraph, 'ErdosRenyi':self.ErdosRenyiGraph, 
                               'Gilbert':self.GilbertGraph, 'geographic':self.geographicGraph, 
                               'BarabasiAlbert':self.BarabasiAlbertGraph, 
                               'DorogovtsevMendes':self.DorogovtsevMendesGraph
                               }
-=======
->>>>>>> 8cf4f69634b38e60e86414b5a59472fbb27cc1c8
 
     def add_vertex(self, id):
         """
@@ -42,14 +37,12 @@ class Graph:
         if id not in self.vertices:
             self.vertices[id] = Vertex(id)
 
-    def add_edge(self, source_id, target_id):
-        """
-        Adds an edge between two vertices.
-        
-        Args:
-            source_id (str): ID of the source vertex.
-            target_id (str): ID of the target vertex.
-        """
+
+    def total_weight(self):
+        return sum(edge.weight for edge in self.edges.values())
+
+
+    def add_edge(self, source_id, target_id, weight=1):
         if source_id not in self.vertices:
             self.add_vertex(source_id)
         if target_id not in self.vertices:
@@ -58,9 +51,9 @@ class Graph:
         source = self.vertices[source_id]
         target = self.vertices[target_id]
 
-        edge_id = f'{source_id}<->{target_id}' if self.directed else f'{source_id}--{target_id}'
-        self.edges[edge_id] = Edge(source, target, edge_id, self.directed)
-        
+        edge_id = f'{source_id}->{target_id}' if self.directed else f'{source_id}--{target_id}'
+        self.edges[edge_id] = Edge(source, target, edge_id, self.directed, weight)
+
         source.add_neighbor(target)
         if not self.directed:
             target.add_neighbor(source)
@@ -97,13 +90,12 @@ class Graph:
         for edge in self.edges.values():
             connector = " -> " if edge.directed else " -- "
             dot_graph += f'    "{edge.source.id}"{connector}"{edge.target.id}";\n'
-        
+        #
         dot_graph += "}"
         
-        with open(filename, 'w') as f:  # Corrección aquí
+        with open(filename, 'w') as f:  
             f.write(dot_graph)
         
-        print(f'DOT file saved as {filename}')
         
 
     def meshGraph(self, numRows, numColumns):
@@ -257,7 +249,6 @@ class Graph:
             
             # Connect it to both endpoints of the chosen edge
             self.add_edge(str(i), randomVertex1.id)
-<<<<<<< HEAD
             self.add_edge(str(i), randomVertex2.id)
             
             
@@ -351,59 +342,145 @@ class Graph:
 
         return dfs_tree
 
-    def Dijkstra(self, s):
-        """
-        Dijkstra's algorithm that returns a shortest-path tree from source `s`
-        with vertex names annotated with their distance from the source.
 
-        Args:
-            s (str): ID of the source vertex.
+    def is_connected(self):
+        if not self.vertices:
+            return True
+        start = next(iter(self.vertices))  # Tomar cualquier vértice para empezar
+        visited = set()
+        queue = [start]
+        while queue:
+            current = queue.pop(0)
+            if current not in visited:
+                visited.add(current)
+                # Obtener vecinos del vértice current
+                vecinos = []
+                for edge in self.edges.values():
+                    if edge.source == current:
+                        vecinos.append(edge.target)
+                    elif edge.target == current:
+                        vecinos.append(edge.source)
+                for vecino in vecinos:
+                    if vecino not in visited:
+                        queue.append(vecino)
+        return len(visited) == len(self.vertices)
 
-        Returns:
-            Graph: A new Graph object representing the shortest-path tree with renamed nodes.
+
+    def kruskal_mst(self):
+        parent = {}
+        rank = {}
+
+        def find(v):
+            if parent[v] != v:
+                parent[v] = find(parent[v])
+            return parent[v]
+
+        def union(u, v):
+            root_u = find(u)
+            root_v = find(v)
+            if root_u == root_v:
+                return False
+            if rank[root_u] > rank[root_v]:
+                parent[root_v] = root_u
+            else:
+                parent[root_u] = root_v
+                if rank[root_u] == rank[root_v]:
+                    rank[root_v] += 1
+            return True
+
+        for vertex in self.vertices.values():
+            parent[vertex.id] = vertex.id
+            rank[vertex.id] = 0
+
+        sorted_edges = sorted(self.edges.values(), key=lambda e: e.weight)
+
+        mst = Graph(directed=self.directed)
+        total_weight = 0
+        for v_id in self.vertices:
+            mst.add_vertex(v_id)
+
+        for edge in sorted_edges:
+            u = edge.source.id
+            v = edge.target.id
+            if union(u, v):
+                mst.add_edge(u, v, edge.weight)
+                total_weight += edge.weight
+
+        print(f"Peso total del MST (Kruskal directo): {total_weight}")
+        return mst
+
+
+
+    def kruskal_inverse_mst(self):
+        current_edges = list(self.edges.values())
+        current_edges.sort(key=lambda e: e.weight, reverse=True)
+
+        def is_connected(edge_list):
+            test_graph = Graph(directed=self.directed)
+            for v_id in self.vertices:
+                test_graph.add_vertex(v_id)
+            for e in edge_list:
+                test_graph.add_edge(e.source.id, e.target.id, e.weight)
+            start = next(iter(test_graph.vertices))
+            bfs_tree = test_graph.BFS(start)
+            return len(bfs_tree.vertices) == len(self.vertices)
+
+        for edge in current_edges[:]:
+            temp = [e for e in current_edges if e != edge]
+            if is_connected(temp):
+                current_edges = temp
+
+        mst = Graph(directed=self.directed)
+        total_weight = 0
+        for v_id in self.vertices:
+            mst.add_vertex(v_id)
+        for edge in current_edges:
+            mst.add_edge(edge.source.id, edge.target.id, edge.weight)
+            total_weight += edge.weight
+
+        print(f"Peso total del MST (Kruskal inverso): {total_weight}")
+        return mst
+
+    def prim_mst(self):
         """
-        if s not in self.vertices:
+        Algoritmo de Prim para construir el Árbol de Expansión Mínima (MST).
+        Retorna un nuevo objeto Graph con las aristas del MST.
+        """
+        if not self.vertices:
             return Graph(directed=self.directed)
 
-        # Paso 1: Inicializar distancias y predecesores
-        distances = {v: float('inf') for v in self.vertices}
-        previous = {v: None for v in self.vertices}
-        distances[s] = 0
-
-        # Paso 2: Cola de prioridad
-        queue = [(0, s)]
+        mst = Graph(directed=self.directed)
         visited = set()
 
-        while queue:
-            current_dist, u = heapq.heappop(queue)
-            if u in visited:
+        start_vertex = next(iter(self.vertices.values()))
+        visited.add(start_vertex.id)
+        mst.add_vertex(start_vertex.id)
+
+        # Cola de prioridad: (peso, id_origen, id_destino, edge)
+        edges_heap = []
+
+        for edge in self.edges:
+            if edge.source.id == start_vertex.id or (not edge.directed and edge.target.id == start_vertex.id):
+                neighbor = edge.target if edge.source.id == start_vertex.id else edge.source
+                heapq.heappush(edges_heap, (edge.weight, start_vertex.id, neighbor.id, edge))
+
+        while edges_heap and len(visited) < len(self.vertices):
+            weight, u_id, v_id, edge = heapq.heappop(edges_heap)
+
+            if v_id in visited and u_id in visited:
                 continue
-            visited.add(u)
 
-            for neighbor in self.vertices[u].neighbors:
-                v = neighbor.id
-                if distances[u] + 1 < distances[v]:
-                    distances[v] = distances[u] + 1
-                    previous[v] = u
-                    heapq.heappush(queue, (distances[v], v))
+            new_vertex_id = v_id if v_id not in visited else u_id
 
-        # Paso 3: Construir el árbol de caminos mínimos con nodos renombrados
-        dijkstra_tree = Graph(directed=self.directed)
+            visited.add(new_vertex_id)
+            mst.add_vertex(new_vertex_id)
+            mst.add_edge(u_id, v_id, weight)
 
-        # Mapeo de id original → nuevo id con distancia
-        renamed_ids = {}
-        for v in self.vertices:
-            dist = distances[v]
-            if dist != float('inf'):
-                renamed = f"{v} ({dist:.2f})"
-                renamed_ids[v] = renamed
-                dijkstra_tree.add_vertex(renamed)
+            # Agregar nuevas aristas desde el nuevo vértice a la cola
+            for e in self.edges:
+                if ((e.source.id == new_vertex_id and e.target.id not in visited) or
+                    (not self.directed and e.target.id == new_vertex_id and e.source.id not in visited)):
+                    neighbor = e.target if e.source.id == new_vertex_id else e.source
+                    heapq.heappush(edges_heap, (e.weight, e.source.id, e.target.id, e))
 
-        for v, u in previous.items():
-            if u is not None and v in renamed_ids and u in renamed_ids:
-                dijkstra_tree.add_edge(renamed_ids[u], renamed_ids[v])
-
-        return dijkstra_tree
-=======
-            self.add_edge(str(i), randomVertex2.id)
->>>>>>> 8cf4f69634b38e60e86414b5a59472fbb27cc1c8
+        return mst
